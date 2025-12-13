@@ -1,0 +1,82 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"   // <- ESSA LINHA resolve o erro
+}
+
+model Company {
+  id           Int      @id @default(autoincrement())
+  name         String
+  slug         String   @unique
+  email        String   @unique
+  passwordHash String
+  jobs         Job[]
+  createdAt    DateTime @default(now())
+}
+
+model Job {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String
+  location    String
+  workMode    WorkMode
+  seniority   Seniority
+  isOpen      Boolean      @default(true)
+
+  company   Company @relation(fields: [companyId], references: [id])
+  companyId Int
+
+  applications Application[]
+  createdAt    DateTime @default(now())
+}
+
+model Candidate {
+  id        Int           @id @default(autoincrement())
+  name      String
+  email     String        @unique
+  phone     String?
+  city      String
+  seniority Seniority
+
+  applications Application[]
+  createdAt DateTime @default(now())
+}
+
+model Application {
+  id          Int        @id @default(autoincrement())
+  job         Job        @relation(fields: [jobId], references: [id])
+  jobId       Int
+  candidate   Candidate  @relation(fields: [candidateId], references: [id])
+  candidateId Int
+
+  status    ApplicationStatus @default(NOVO)
+  cvUrl     String?
+  score     Int?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+enum WorkMode {
+  REMOTO
+  HIBRIDO
+  PRESENCIAL
+}
+
+enum Seniority {
+  JUNIOR
+  PLENO
+  SENIOR
+}
+
+enum ApplicationStatus {
+  NOVO
+  EM_ANALISE
+  ENTREVISTA
+  REPROVADO
+  CONTRATADO
+}

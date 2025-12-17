@@ -1,34 +1,16 @@
 // app/page.tsx
 
-import Link from "next/link";
+import Link from "next/link"; // Para navegação entre as páginas
+import Header from "./_components/Header"; // Importando corretamente o Header
 
-export default async function Home() {
+export default function Home() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-900/80 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
-          <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500 text-lg font-bold text-white">
-              VF
-            </div>
-            <div>
-              <h1 className="text-2xl font-semibold tracking-tight">
-                VagaFlow
-              </h1>
-              <p className="text-sm text-gray-400">
-                Conectando talentos às melhores oportunidades
-              </p>
-            </div>
-          </div>
-          <button className="rounded-full border border-gray-700 px-4 py-2 text-xs font-semibold text-gray-200 hover:border-indigo-500 hover:text-white transition">
-            Área da empresa
-          </button>
-        </div>
-      </header>
-
-      {/* Main Section */}
+      <Header /> {/* Usando o Header aqui */}
+      {/* Seção principal */}
       <main className="mx-auto max-w-5xl px-6 py-12">
+        {/* Hero */}
         <section className="mb-10">
           <h2 className="text-3xl font-semibold">Encontre a vaga ideal</h2>
           <p className="mt-2 text-sm text-gray-400">
@@ -46,7 +28,7 @@ export default async function Home() {
             atualizações!
           </p>
 
-          {/* Mock vaga */}
+          {/* Mock de vaga */}
           <div className="mt-6 rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-xl">
             <h4 className="text-xl font-semibold text-white">
               Desenvolvedor Front-End
@@ -61,6 +43,22 @@ export default async function Home() {
               Ver detalhes
             </Link>
           </div>
+        </section>
+
+        {/* Áreas para candidato e empresa */}
+        <section className="mt-10 flex justify-between space-x-4">
+          <Link
+            href="/empresa/vagas"
+            className="rounded-lg bg-indigo-500 text-white p-4 text-center w-full max-w-xs hover:bg-indigo-600"
+          >
+            Área da Empresa
+          </Link>
+          <Link
+            href="/vaga"
+            className="rounded-lg bg-indigo-500 text-white p-4 text-center w-full max-w-xs hover:bg-indigo-600"
+          >
+            Área do Candidato
+          </Link>
         </section>
       </main>
     </div>

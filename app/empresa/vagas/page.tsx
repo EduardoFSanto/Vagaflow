@@ -1,10 +1,11 @@
 // app/empresa/vagas/page.tsx
-
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma"; // Ajuste a importação do prisma
+import Link from "next/link";
 
 export default async function CompanyVagas() {
+  // Buscar as vagas da empresa (onde 'companyId' é o ID da empresa)
   const jobs = await prisma.job.findMany({
-    where: { companyId: 1 }, // Exemplo: pegar todas as vagas de uma empresa (companyId = 1)
+    where: { companyId: 1 }, // Exemplo: usar o companyId correto da empresa
     include: { company: true },
   });
 
@@ -16,7 +17,8 @@ export default async function CompanyVagas() {
           <li key={job.id}>
             <h2>{job.title}</h2>
             <p>{job.description}</p>
-            <button>Editar vaga</button>
+            {/* Aqui você pode colocar os botões de editar e excluir */}
+            <Link href={`/empresa/vaga/edit/${job.id}`}>Editar vaga</Link>
             <button>Excluir vaga</button>
           </li>
         ))}

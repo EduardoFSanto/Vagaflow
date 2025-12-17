@@ -1,84 +1,57 @@
-// prisma/schema.prisma
+// schema.prisma
 
-
+// Conexão com o banco de dados (SQLite neste caso)
 datasource db {
   provider = "sqlite"
-  url = "file:./dev.db"
-  
-}   
+  url      = "file:./dev.db"
+}
 
+// Gerador do Prisma Client
 generator client {
   provider = "prisma-client-js"
 }
 
-
+// Modelo de Empresa
 model Company {
-  id           Int      @id @default(autoincrement())
-  name         String
-  slug         String   @unique
-  email        String   @unique
-  passwordHash String
-  jobs         Job[]
-  createdAt    DateTime @default(now())
+  id        Int      @id @default(autoincrement())  // ID da empresa
+  name      String
+  slug      String   @unique  // Slug para identificação
+  email     String   @unique  // E-mail da empresa
+  password  String
+  createdAt DateTime @default(now())  // Data de criação
+  jobs      Job[]
 }
 
+// Modelo de Vaga (Job)
 model Job {
-  id          Int          @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())  // ID da vaga
   title       String
   description String
   location    String
-  workMode    WorkMode
-  seniority   Seniority
-  isOpen      Boolean      @default(true)
-
-  company   Company @relation(fields: [companyId], references: [id])
-  companyId Int
-
+  workMode    String     // Remoto, Híbrido, Presencial
+  seniority   String     // Junior, Pleno, Senior
+  company     Company   @relation(fields: [companyId], references: [id])
+  companyId   Int
+  createdAt   DateTime  @default(now())  // Data de criação
   applications Application[]
-  createdAt    DateTime @default(now())
 }
 
+// Modelo de Candidato (Candidate)
 model Candidate {
-  id          Int      @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())  // ID do candidato
   name        String
-  email       String   @unique
-  linkedinUrl String?
+  email       String       @unique  // E-mail do candidato
+  linkedinUrl String?      // URL do LinkedIn (opcional)
   applications Application[]
 }
 
-
-
-
+// Modelo de Candidatura (Application)
 model Application {
-  id          Int        @id @default(autoincrement())
-  job         Job        @relation(fields: [jobId], references: [id])
+  id          Int          @id @default(autoincrement())  // ID da candidatura
+  job         Job          @relation(fields: [jobId], references: [id])
   jobId       Int
-  candidate   Candidate  @relation(fields: [candidateId], references: [id])
+  candidate   Candidate    @relation(fields: [candidateId], references: [id])
   candidateId Int
-
-  status    ApplicationStatus @default(NOVO)
-  cvUrl     String?
-  score     Int?
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
-}
-
-enum WorkMode {
-  REMOTO
-  HIBRIDO
-  PRESENCIAL
-}
-
-enum Seniority {
-  JUNIOR
-  PLENO
-  SENIOR
-}
-
-enum ApplicationStatus {
-  NOVO
-  EM_ANALISE
-  ENTREVISTA
-  REPROVADO
-  CONTRATADO
+  createdAt   DateTime     @default(now())  // Data de criação da candidatura
+  updatedAt   DateTime     @updatedAt  // Data de atualização da candidatura
 }

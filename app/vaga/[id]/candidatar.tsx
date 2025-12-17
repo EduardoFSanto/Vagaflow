@@ -7,7 +7,7 @@ type Props = { jobId: number };
 export default function CandidateForm({ jobId }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [linkedinUrl, setLinkedinUrl] = useState(""); // 👈 aqui está o "linkedin" certo
+  const [linkedinUrl, setLinkedinUrl] = useState(""); // Aqui está o "linkedin" certo
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
 
@@ -86,7 +86,7 @@ export default function CandidateForm({ jobId }: Props) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-lg bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-600 disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full mt-4 bg-indigo-500 hover:bg-indigo-600 p-2 text-white rounded-md"
       >
         {loading ? "Enviando..." : "Enviar candidatura"}
       </button>

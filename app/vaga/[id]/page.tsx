@@ -1,4 +1,8 @@
+
 // app/vaga/[id]/page.tsx
+
+import { prisma } from "@/lib/prisma";  // Certifique-se de importar o prisma corretamente
+import { notFound } from "next/navigation";  // Para quando a vaga não for encontrada
 
 export default async function JobPage({ params }: { params: { id: string } }) {
   // Mock dos dados da vaga
@@ -21,19 +25,13 @@ export default async function JobPage({ params }: { params: { id: string } }) {
       <main className="mx-auto max-w-5xl px-6 py-12">
         <section className="rounded-xl border border-gray-700 bg-gray-800 p-6 shadow-xl">
           <div className="mb-3">
-            <h3 className="text-lg font-semibold text-white">
-              {job.company.name}
-            </h3>
+            <h3 className="text-lg font-semibold text-white">{job.company.name}</h3>
             <p className="text-sm text-gray-400">{job.company.slug}</p>
           </div>
 
           <p className="text-sm text-gray-400">{job.description}</p>
-          <div className="mt-4 text-sm text-gray-500">
-            Localização: {job.location}
-          </div>
-          <div className="text-sm text-gray-500">
-            Modalidade: {job.workMode}
-          </div>
+          <div className="mt-4 text-sm text-gray-500">Localização: {job.location}</div>
+          <div className="text-sm text-gray-500">Modalidade: {job.workMode}</div>
         </section>
       </main>
     </div>

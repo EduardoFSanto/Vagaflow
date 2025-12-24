@@ -1,64 +1,37 @@
-// app/page.tsx
-
-import Link from "next/link"; // Para navegação entre as páginas
-import Header from "./_components/Header"; // Importando corretamente o Header
+import Link from "next/link";
+import Header from "./_components/Header";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      {/* Header */}
-      <Header /> {/* Usando o Header aqui */}
-      {/* Seção principal */}
-      <main className="mx-auto max-w-5xl px-6 py-12">
+    <div className="min-h-screen bg-slate-950 text-white">
+      <Header />
+
+      <main className="mx-auto max-w-5xl px-6 py-16 space-y-16">
         {/* Hero */}
-        <section className="mb-10">
-          <h2 className="text-3xl font-semibold">Encontre a vaga ideal</h2>
-          <p className="mt-2 text-sm text-gray-400">
-            O VagaFlow organiza currículos e conecta talentos às melhores
-            oportunidades. Abaixo você vê as vagas deste ambiente de
-            demonstração.
-          </p>
-        </section>
-
-        {/* Vagas em Destaque */}
         <section>
-          <h3 className="text-2xl font-semibold mb-4">Vagas em Destaque</h3>
-          <p className="text-sm text-gray-500">
-            No momento, não há vagas publicadas. Fique atento para as
-            atualizações!
+          <h2 className="text-4xl font-bold">Encontre a vaga ideal</h2>
+          <p className="mt-4 text-slate-400 max-w-2xl">
+            O VagaFlow conecta talentos às empresas. Se você é candidato, envie
+            seu currículo. Se é empresa, publique vagas em poucos passos.
           </p>
 
-          {/* Mock de vaga */}
-          <div className="mt-6 rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-xl">
-            <h4 className="text-xl font-semibold text-white">
-              Desenvolvedor Front-End
-            </h4>
-            <p className="text-sm text-gray-400">
-              Trabalhe com React, Next.js e outras tecnologias modernas.
-            </p>
+          <div className="mt-8">
             <Link
-              href="/vaga/1"
-              className="mt-4 inline-block text-indigo-400 hover:text-indigo-200"
+              href="/vaga"
+              className="inline-flex items-center rounded-xl bg-indigo-600 px-6 py-3 font-semibold hover:bg-indigo-500"
             >
-              Ver detalhes
+              Quero me candidatar
             </Link>
           </div>
         </section>
 
-        {/* Áreas para candidato e empresa */}
-        <section className="mt-10 flex justify-between space-x-4">
-          <Link
-            href="/empresa/vagas"
-            className="rounded-lg bg-indigo-500 text-white p-4 text-center w-full max-w-xs hover:bg-indigo-600"
-          >
-            Área da Empresa
-          </Link>
-          <Link
-            href="/vaga"
-            className="rounded-lg bg-indigo-500 text-white p-4 text-center w-full max-w-xs hover:bg-indigo-600"
-          >
-            Área do Candidato
-          </Link>
+        {/* Destaque */}
+        <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+          <h3 className="text-xl font-semibold">Vagas em destaque</h3>
+          <p className="mt-2 text-slate-400">
+            No momento não há vagas publicadas. Empresas podem criar vagas na
+            área da empresa.
+          </p>
         </section>
       </main>
     </div>

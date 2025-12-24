@@ -1,23 +1,27 @@
-// app/_components/Header.tsx
+import Link from "next/link";
 
 export default function Header() {
   return (
-    <header className="border-b border-gray-800 bg-gray-900/80 backdrop-blur">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
-        <div className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500 text-lg font-bold text-white">
+    <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur">
+      <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 font-bold">
             VF
           </div>
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">VagaFlow</h1>
-            <p className="text-sm text-gray-400">
-              Conectando talentos às melhores oportunidades
+            <p className="font-semibold">VagaFlow</p>
+            <p className="text-xs text-slate-400">
+              Conectando talentos às oportunidades
             </p>
           </div>
         </div>
-        <button className="rounded-full border border-gray-700 px-4 py-2 text-xs font-semibold text-gray-200 hover:border-indigo-500 hover:text-white transition">
+
+        <Link
+          href="/empresa/vagas"
+          className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:border-indigo-500"
+        >
           Área da empresa
-        </button>
+        </Link>
       </div>
     </header>
   );

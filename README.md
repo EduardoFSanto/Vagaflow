@@ -1,4 +1,4 @@
-text
+
 # Vagaflow
 
 Vagaflow é uma aplicação web que conecta candidatos e empresas, permitindo cadastrar e visualizar vagas de forma simples, moderna e responsiva.
@@ -46,7 +46,6 @@ createdAt DateTime @default(now())
 jobs Job[]
 }
 
-text
 
 > Próximos passos naturais: definir o modelo `Job` (vaga) e relacionar com `Company` (1:N).
 

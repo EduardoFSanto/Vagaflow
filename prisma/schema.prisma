@@ -1,57 +1,87 @@
-// schema.prisma
-
-// Conexão com o banco de dados (SQLite neste caso)
-datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
-}
-
-// Gerador do Prisma Client
 generator client {
   provider = "prisma-client-js"
 }
 
-// Modelo de Empresa
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum WorkMode {
+  REMOTE
+  HYBRID
+  ONSITE
+}
+
+enum Seniority {
+  INTERN
+  JUNIOR
+  MID
+  SENIOR
+  LEAD
+}
+
 model Company {
-  id        Int      @id @default(autoincrement())  // ID da empresa
+  id        Int      @id @default(autoincrement())
   name      String
-  slug      String   @unique  // Slug para identificação
-  email     String   @unique  // E-mail da empresa
+  slug      String   @unique
+  email     String   @unique
   password  String
-  createdAt DateTime @default(now())  // Data de criação
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   jobs      Job[]
 }
 
-// Modelo de Vaga (Job)
 model Job {
-  id          Int        @id @default(autoincrement())  // ID da vaga
+  id          Int       @id @default(autoincrement())
   title       String
+  slug        String    @unique
   description String
-  location    String
-  workMode    String     // Remoto, Híbrido, Presencial
-  seniority   String     // Junior, Pleno, Senior
-  company     Company   @relation(fields: [companyId], references: [id])
+
+  location    String    @default("Não informado")
+  workMode    WorkMode  @default(REMOTE)
+  seniority   Seniority @default(JUNIOR)
+
   companyId   Int
-  createdAt   DateTime  @default(now())  // Data de criação
+  company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
   applications Application[]
+
+  @@index([companyId])
+  @@index([createdAt])
 }
 
-// Modelo de Candidato (Candidate)
 model Candidate {
-  id          Int          @id @default(autoincrement())  // ID do candidato
-  name        String
-  email       String       @unique  // E-mail do candidato
-  linkedinUrl String?      // URL do LinkedIn (opcional)
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   applications Application[]
 }
 
-// Modelo de Candidatura (Application)
 model Application {
-  id          Int          @id @default(autoincrement())  // ID da candidatura
-  job         Job          @relation(fields: [jobId], references: [id])
+  id          Int       @id @default(autoincrement())
+
   jobId       Int
-  candidate   Candidate    @relation(fields: [candidateId], references: [id])
+  job         Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
   candidateId Int
-  createdAt   DateTime     @default(now())  // Data de criação da candidatura
-  updatedAt   DateTime     @updatedAt  // Data de atualização da candidatura
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+
+  message     String?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([jobId, candidateId])
+  @@index([jobId])
+  @@index([candidateId])
 }

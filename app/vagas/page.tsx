@@ -1,47 +1,32 @@
-// app/vagas/page.tsx
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 
-async function getJobs() {
-  const res = await fetch("http://localhost:3000/api/jobs", {
-    cache: "no-store",
+export default async function VagasPage() {
+  const jobs = await prisma.job.findMany({
+    orderBy: { createdAt: "desc" },
+    include: {
+      company: {
+        select: { name: true, slug: true },
+      },
+    },
   });
 
-  if (!res.ok) {
-    throw new Error("Erro ao buscar vagas");
-  }
-
-  return res.json();
-}
-
-export default async function VagasPage() {
-  const { jobs } = await getJobs();
-
   return (
-    <div className="min-h-screen bg-slate-950 text-white px-6 py-10">
-      <h1 className="text-3xl font-bold mb-6">Vagas disponíveis</h1>
+    <div className="max-w-5xl mx-auto px-6 py-12 text-white">
+      <h1 className="text-3xl font-bold mb-8">Vagas disponíveis</h1>
 
-      {jobs.length === 0 && (
-        <p className="text-slate-400">Nenhuma vaga disponível no momento.</p>
-      )}
-
-      <ul className="space-y-4">
-        {jobs.map((job: any) => (
-          <li
+      <div className="space-y-4">
+        {jobs.map((job) => (
+          <Link
             key={job.id}
-            className="rounded-xl border border-slate-800 bg-slate-900 p-4"
+            href={`/vagas/${job.slug}`}
+            className="block rounded-xl border border-slate-800 p-5 hover:bg-slate-900"
           >
             <h2 className="text-xl font-semibold">{job.title}</h2>
-            <p className="text-slate-400 mt-1">{job.company?.name}</p>
-
-            <Link
-              href={`/vagas/${job.slug}`}
-              className="inline-block mt-3 text-indigo-400 hover:underline"
-            >
-              Ver vaga →
-            </Link>
-          </li>
+            <p className="text-slate-400">{job.company.name}</p>
+          </Link>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

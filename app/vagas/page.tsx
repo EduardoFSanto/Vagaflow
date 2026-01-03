@@ -12,21 +12,27 @@ export default async function VagasPage() {
   });
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-12 text-white">
-      <h1 className="text-3xl font-bold mb-8">Vagas disponíveis</h1>
+    <div className="max-w-5xl mx-auto px-6 py-10">
+      <h1 className="text-3xl font-bold mb-6">Vagas disponíveis</h1>
 
-      <div className="space-y-4">
+      <ul className="space-y-4">
         {jobs.map((job) => (
-          <Link
+          <li
             key={job.id}
-            href={`/vagas/${job.slug}`}
-            className="block rounded-xl border border-slate-800 p-5 hover:bg-slate-900"
+            className="border border-slate-800 rounded-xl p-4 hover:bg-slate-900"
           >
             <h2 className="text-xl font-semibold">{job.title}</h2>
             <p className="text-slate-400">{job.company.name}</p>
-          </Link>
+
+            <Link
+              href={`/vagas/${job.slug}`}
+              className="text-indigo-400 hover:underline mt-2 inline-block"
+            >
+              Ver vaga →
+            </Link>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }

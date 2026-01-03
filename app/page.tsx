@@ -17,7 +17,7 @@ export default function Home() {
 
           <div className="mt-8">
             <Link
-              href="/vaga"
+              href="/vagas"
               className="inline-flex items-center rounded-xl bg-indigo-600 px-6 py-3 font-semibold hover:bg-indigo-500"
             >
               Quero me candidatar

@@ -1,14 +1,15 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
-type Props = {
+type PageProps = {
   params: Promise<{
     slug: string;
   }>;
 };
 
-export default async function JobPage({ params }: Props) {
-  const { slug } = await params;
+export default async function JobPage({ params }: PageProps) {
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug;
 
   if (!slug) {
     notFound();
@@ -31,7 +32,7 @@ export default async function JobPage({ params }: Props) {
 
       <p className="mt-2 text-slate-500">{job.company.name}</p>
 
-      <div className="mt-6 text-slate-700 whitespace-pre-line">
+      <div className="mt-6 whitespace-pre-line text-slate-700">
         {job.description}
       </div>
     </main>

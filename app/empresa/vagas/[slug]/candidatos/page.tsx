@@ -23,9 +23,10 @@ async function getJobWithApplications(slug: string) {
 export default async function JobCandidatesPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>; // 👈 Promise no Next.js 15+
 }) {
-  const job = await getJobWithApplications(params.slug);
+  const { slug } = await params; // 👈 await params
+  const job = await getJobWithApplications(slug);
 
   if (!job) {
     notFound();
@@ -44,7 +45,7 @@ export default async function JobCandidatesPage({
             ← Voltar ao dashboard
           </Link>
 
-          <h1 className="text-4xl font-bold">{job.title}</h1>
+          <h1 className="text-4xl font-bold mt-2">{job.title}</h1>
           <p className="mt-2 text-slate-400">
             {job.applications.length} candidatura(s) recebida(s)
           </p>
@@ -71,7 +72,7 @@ export default async function JobCandidatesPage({
 
                     <a
                       href={`mailto:${app.candidate.email}`}
-                      className="mt-1 text-indigo-400 hover:text-indigo-300"
+                      className="mt-1 text-indigo-400 hover:text-indigo-300 inline-block"
                     >
                       {app.candidate.email}
                     </a>
@@ -101,10 +102,10 @@ export default async function JobCandidatesPage({
 
                   <div className="flex flex-col gap-2">
                     <a
-                      href={`mailto:${app.candidate.email}`}
-                      className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold hover:bg-indigo-500 text-center"
+                      href={`mailto:${app.candidate.email}?subject=Vaga: ${job.title}`}
+                      className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold hover:bg-indigo-500 text-center whitespace-nowrap"
                     >
-                      Entrar em contato
+                      📧 Entrar em contato
                     </a>
                   </div>
                 </div>

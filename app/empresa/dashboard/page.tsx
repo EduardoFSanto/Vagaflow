@@ -109,26 +109,36 @@ export default async function CompanyDashboard() {
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold">{job.title}</h3>
 
-                    <div className="mt-2 flex gap-2 text-sm">
+                    <div className="mt-2 flex gap-2 text-sm flex-wrap">
                       <span className="rounded bg-slate-800 px-2 py-1">
-                        {job.location}
+                        📍 {job.location}
                       </span>
                       <span className="rounded bg-slate-800 px-2 py-1">
-                        {job.workMode}
+                        {job.workMode === "REMOTE" && "🏠 Remoto"}
+                        {job.workMode === "HYBRID" && "🏢 Híbrido"}
+                        {job.workMode === "ONSITE" && "🏢 Presencial"}
                       </span>
                       <span className="rounded bg-slate-800 px-2 py-1">
-                        {job.seniority}
+                        {job.seniority === "INTERN" && "🎓 Estágio"}
+                        {job.seniority === "JUNIOR" && "🌱 Júnior"}
+                        {job.seniority === "MID" && "⚡ Pleno"}
+                        {job.seniority === "SENIOR" && "🚀 Sênior"}
+                        {job.seniority === "LEAD" && "👑 Lead"}
                       </span>
                     </div>
 
                     <p className="mt-3 text-slate-400">
-                      {job._count.applications} candidatura(s)
+                      {job._count.applications} candidatura(s) •
+                      <span className="text-sm text-slate-500 ml-2">
+                        Criada em{" "}
+                        {new Date(job.createdAt).toLocaleDateString("pt-BR")}
+                      </span>
                     </p>
                   </div>
 
                   <Link
                     href={`/empresa/vagas/${job.slug}/candidatos`}
-                    className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold hover:bg-indigo-500"
+                    className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold hover:bg-indigo-500 whitespace-nowrap"
                   >
                     Ver candidatos
                   </Link>

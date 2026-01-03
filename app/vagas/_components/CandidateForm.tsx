@@ -34,7 +34,7 @@ export default function CandidateForm({ jobId }: { jobId?: number }) {
     setSuccess(false);
 
     try {
-      const response = await fetch("/api/applications/route", {
+      const response = await fetch("/api/applications", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

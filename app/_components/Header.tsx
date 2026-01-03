@@ -2,26 +2,44 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 font-bold">
-            VF
-          </div>
-          <div>
-            <p className="font-semibold">VagaFlow</p>
-            <p className="text-xs text-slate-400">
-              Conectando talentos às oportunidades
-            </p>
-          </div>
-        </div>
+    <header className="border-b border-slate-800 bg-slate-950">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="flex h-16 items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 font-bold">
+              VF
+            </div>
+            <div>
+              <div className="text-lg font-bold">VagaFlow</div>
+              <div className="text-xs text-slate-400">
+                Conectando talentos às oportunidades
+              </div>
+            </div>
+          </Link>
 
-        <Link
-          href="/empresa/vagas"
-          className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:border-indigo-500"
-        >
-          Área da empresa
-        </Link>
+          {/* Navigation */}
+          <nav className="flex items-center gap-6">
+            <Link
+              href="/vagas"
+              className="text-slate-300 hover:text-white transition-colors"
+            >
+              Vagas
+            </Link>
+            <Link
+              href="/empresa/dashboard"
+              className="text-slate-300 hover:text-white transition-colors"
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/empresa/vagas"
+              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold hover:bg-indigo-500 transition-all"
+            >
+              Área da empresa
+            </Link>
+          </nav>
+        </div>
       </div>
     </header>
   );

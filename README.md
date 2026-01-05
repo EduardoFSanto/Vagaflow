@@ -1,8 +1,8 @@
 # 💼 VagaFlow
 
 <div align="center">
+<img width="1350" height="640" alt="image" src="https://github.com/user-attachments/assets/c136ef23-7622-4d22-985e-096a424a2b3c" />
 
-![VagaFlow Banner](https://via.placeholder.com/800x200/6366f1/ffffff?text=VagaFlow+-+Job+Application+Platform)
 
 **A modern job application platform connecting talent with opportunities**
 

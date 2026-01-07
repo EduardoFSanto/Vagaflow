@@ -21,17 +21,83 @@ enum Seniority {
   LEAD
 }
 
+//////////////////////
+// NextAuth Models //
+//////////////////////
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  password      String
+  name          String?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+
+  company  Company?
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+//////////////////////
+// Domain Models   //
+//////////////////////
+
 model Company {
   id        Int      @id @default(autoincrement())
   name      String
   slug      String   @unique
-  email     String   @unique
-  password  String
+
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  jobs      Job[]
+  jobs Job[]
+
+  @@index([userId])
 }
 
 model Job {
@@ -40,15 +106,15 @@ model Job {
   slug        String    @unique
   description String
 
-  location    String    @default("Não informado")
-  workMode    WorkMode  @default(REMOTE)
-  seniority   Seniority @default(JUNIOR)
+  location  String    @default("Não informado")
+  workMode  WorkMode  @default(REMOTE)
+  seniority Seniority @default(JUNIOR)
 
-  companyId   Int
-  company     Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId Int
+  company   Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   applications Application[]
 
@@ -57,9 +123,9 @@ model Job {
 }
 
 model Candidate {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -68,18 +134,18 @@ model Candidate {
 }
 
 model Application {
-  id          Int       @id @default(autoincrement())
+  id          Int @id @default(autoincrement())
 
   jobId       Int
-  job         Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  job         Job @relation(fields: [jobId], references: [id], onDelete: Cascade)
 
   candidateId Int
   candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
 
-  message     String?
+  message String?
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([jobId, candidateId])
   @@index([jobId])

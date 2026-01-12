@@ -108,7 +108,9 @@ model Job {
 
   location  String    @default("Não informado")
   workMode  WorkMode  @default(REMOTE)
-  seniority Seniority @default(JUNIOR)
+  seniority Seniority @default(JUNIOR)   
+
+  isFake Boolean @default(false) // 👈 ADICIONE ISSO
 
   companyId Int
   company   Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)

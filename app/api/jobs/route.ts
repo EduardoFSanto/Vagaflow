@@ -2,20 +2,27 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Prisma, WorkMode, Seniority } from "@prisma/client";
 import { z } from "zod";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
+/* =========================
+   Schema de validação
+========================= */
 const createJobSchema = z.object({
   title: z.string().min(3).max(120),
   description: z.string().min(10).max(5000),
-  companyId: z.number().int().positive().optional(),
 
-  // opcionais (se não vierem, caem nos defaults do schema)
+  // opcionais (usam default do Prisma se não vierem)
   location: z.string().min(2).max(120).optional(),
   workMode: z.nativeEnum(WorkMode).optional(),
   seniority: z.nativeEnum(Seniority).optional(),
 });
 
+/* =========================
+   Utils
+========================= */
 function slugify(input: string) {
   return input
     .normalize("NFD")
@@ -26,59 +33,90 @@ function slugify(input: string) {
     .replace(/(^-|-$)/g, "");
 }
 
+/* =========================
+   GET — listar vagas
+========================= */
 export async function GET() {
-  const jobs = await prisma.job.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { company: { select: { id: true, name: true, slug: true } } },
-  });
-
-  return NextResponse.json({ jobs }, { status: 200 });
-}
-
-export async function POST(req: Request) {
-  let json: unknown;
-
   try {
-    json = await req.json();
-  } catch {
-    return NextResponse.json({ error: "JSON inválido." }, { status: 400 });
-  }
+    const jobs = await prisma.job.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        company: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+      },
+    });
 
-  const parsed = createJobSchema.safeParse(json);
-  if (!parsed.success) {
+    return NextResponse.json({ jobs }, { status: 200 });
+  } catch (error) {
+    console.error(error);
     return NextResponse.json(
-      { error: "Payload inválido.", details: parsed.error.flatten() },
-      { status: 400 }
+      { error: "Erro ao buscar vagas." },
+      { status: 500 }
     );
   }
+}
 
-  const { title, description, companyId, location, workMode, seniority } =
-    parsed.data;
-
+/* =========================
+   POST — criar vaga
+========================= */
+export async function POST(req: Request) {
   try {
-    const company = companyId
-      ? await prisma.company.findUnique({ where: { id: companyId } })
-      : await prisma.company.findFirst();
+    /* 1️⃣ Sessão (obrigatória) */
+    const session = await getServerSession(authOptions);
 
-    if (!company) {
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
+    }
+
+    /* 2️⃣ Parse do body */
+    const json = await req.json();
+    const parsed = createJobSchema.safeParse(json);
+
+    if (!parsed.success) {
       return NextResponse.json(
         {
-          error:
-            "Nenhuma empresa encontrada. Crie uma Company no banco primeiro.",
+          error: "Payload inválido.",
+          details: parsed.error.flatten(),
         },
         { status: 400 }
       );
     }
 
-    // slug único (adiciona sufixo se já existir)
-    const base = slugify(title);
-    let slug = base;
-    for (let i = 1; i < 20; i++) {
-      const exists = await prisma.job.findUnique({ where: { slug } });
-      if (!exists) break;
-      slug = `${base}-${i}`;
+    const { title, description, location, workMode, seniority } = parsed.data;
+
+    /* 3️⃣ Buscar empresa do usuário logado */
+    const company = await prisma.company.findUnique({
+      where: {
+        userId: session.user.id,
+      },
+    });
+
+    if (!company) {
+      return NextResponse.json(
+        { error: "Empresa não encontrada para este usuário." },
+        { status: 404 }
+      );
     }
 
+    /* 4️⃣ Gerar slug único */
+    const baseSlug = slugify(title);
+    let slug = baseSlug;
+
+    for (let i = 1; i < 20; i++) {
+      const exists = await prisma.job.findUnique({
+        where: { slug },
+      });
+
+      if (!exists) break;
+      slug = `${baseSlug}-${i}`;
+    }
+
+    /* 5️⃣ Criar vaga */
     const job = await prisma.job.create({
       data: {
         title,
@@ -89,26 +127,33 @@ export async function POST(req: Request) {
         ...(workMode ? { workMode } : {}),
         ...(seniority ? { seniority } : {}),
       },
-      select: { id: true, slug: true },
+      select: {
+        id: true,
+        slug: true,
+      },
     });
 
     return NextResponse.json({ ok: true, job }, { status: 201 });
   } catch (err) {
+    console.error(err);
+
     if (err instanceof Prisma.PrismaClientKnownRequestError) {
-      // P2002 = unique constraint (slug/email etc.)
       if (err.code === "P2002") {
         return NextResponse.json(
           { error: "Valor único já existe." },
           { status: 409 }
         );
       }
+
       return NextResponse.json(
-        { error: "Erro no banco.", code: err.code },
+        { error: "Erro no banco de dados.", code: err.code },
         { status: 400 }
       );
     }
 
-    console.error(err);
-    return NextResponse.json({ error: "Erro interno." }, { status: 500 });
+    return NextResponse.json(
+      { error: "Erro interno do servidor." },
+      { status: 500 }
+    );
   }
 }
